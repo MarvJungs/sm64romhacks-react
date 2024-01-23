@@ -40,28 +40,8 @@ export default function Hacks() {
     if(error) return 'Error!';
 
     return (
-        <div align="center">
-            <div className="row">
-                <div className="col">
-                    <input type="text" id="hackNamesInput" placeholder="Search for Hacknames.." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_name")}} />
-                </div>
-                <div className="col">
-                    <input type="text" id="authorNamesInput" placeholder="Search for hackcreators.." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_author")}} />
-                </div>
-                <div className="col">
-                 <input type="text" id="hackDatesInput" placeholder="Search for Date (yyyy-mm-dd).." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_release_date")}} />
-                </div>
-                <div className="col">
-                    <select className="form-select form-select-sm" id="tagInput" onChange={e => {setFilterQuery(e.target.value); setFilter("hack_tags")}}>
-                        <option value="">Select A Tag</option>
-                        <TagList tags={tags} />
-                    </select>
-                </div>
-                <div className="col">
-                    <a className="btn btn-primary" href="/hacks/random.php">Random</a>
-                </div>
-            </div>
-            <br/>
+        <>
+            <SearchBar tags={tags} setFilterQuery={setFilterQuery} setFilter={setFilter}/>
             <HacksList hacks={hacks.filter((hack) => {
                 switch (filter) {
                     case "hack_name":
@@ -76,7 +56,7 @@ export default function Hacks() {
                         return hack;
                 }
             })} />
-        </div>
+        </>
     );
 }
 
@@ -97,7 +77,7 @@ export function HacksList({hacks}) {
                         <th>Creator</th>
                         <th>Initial Release Date</th>
                         <th>Downloads</th>
-                        <th>Tag</th>
+                        <th hidden>Tag</th>
                         <AdminHeader />
                     </tr>
                     {hackItems}
@@ -114,7 +94,7 @@ function Hack({hack}) {
             <td>{hack.hack_author}</td>
             <td>{hack.release_date}</td>
             <td><span className="text-muted">Downloads: {hack.total_downloads}</span></td>
-            <td>{hack.hack_tags}</td>
+            <td hidden>{hack.hack_tags}</td>
             <AdminButtons hack={hack} />
         </>
     )
@@ -163,30 +143,27 @@ function TagList({tags}) {
 }
 
 
-function SearchBar({tags}) {
+function SearchBar({tags, setFilterQuery, setFilter}) {
     return (
-        <>
-            <div className="row">
-                <div className="col">
-                    <input type="text" id="hackNamesInput" placeholder="Search for Hacknames.." />
-                </div>
-                <div className="col">
-                    <input type="text" id="authorNamesInput" placeholder="Search for hackcreators.." />
-                </div>
-                <div className="col">
-                 <input type="text" id="hackDatesInput" placeholder="Search for Date (yyyy-mm-dd).." />
-                </div>
-                <div className="col">
-                    <select className="form-select form-select-sm" id="tagInput">
-                        <option value="">Select A Tag</option>
-                        <TagList tags={tags} />
-                    </select>
-                </div>
-                <div className="col">
-                    <a className="btn btn-primary" href="/hacks/random.php">Random</a>
-                </div>
+        <div className="row">
+            <div className="col">
+                <input type="text" id="hackNamesInput" placeholder="Search for Hacknames.." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_name")}} />
             </div>
-            <br/>
-        </>
+            <div className="col">
+                <input type="text" id="authorNamesInput" placeholder="Search for hackcreators.." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_author")}} />
+            </div>
+            <div className="col">
+                <input type="text" id="hackDatesInput" placeholder="Search for Date (yyyy-mm-dd).." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_release_date")}} />
+            </div>
+            <div className="col">
+                <select className="form-select form-select-sm" id="tagInput" onChange={e => {setFilterQuery(e.target.value); setFilter("hack_tags")}}>
+                    <option value="">Select A Tag</option>
+                    <TagList tags={tags} />
+                </select>
+            </div>
+            <div className="col">
+                <a className="btn btn-primary" href="/hacks/random.php">Random</a>
+            </div>
+        </div>
     )
 }
