@@ -10,6 +10,7 @@ export default function Hacks() {
     const [tags, setTags] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [filter, setFilter] = useState("");
     const [filterQuery, setFilterQuery] = useState("")
 
 
@@ -42,16 +43,16 @@ export default function Hacks() {
         <div align="center">
             <div className="row">
                 <div className="col">
-                    <input type="text" id="hackNamesInput" placeholder="Search for Hacknames.." />
+                    <input type="text" id="hackNamesInput" placeholder="Search for Hacknames.." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_name")}} />
                 </div>
                 <div className="col">
-                    <input type="text" id="authorNamesInput" placeholder="Search for hackcreators.." />
+                    <input type="text" id="authorNamesInput" placeholder="Search for hackcreators.." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_author")}} />
                 </div>
                 <div className="col">
-                 <input type="text" id="hackDatesInput" placeholder="Search for Date (yyyy-mm-dd).." />
+                 <input type="text" id="hackDatesInput" placeholder="Search for Date (yyyy-mm-dd).." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_release_date")}} />
                 </div>
                 <div className="col">
-                    <select className="form-select form-select-sm" id="tagInput" onChange={e => setFilterQuery(e.target.value)}>
+                    <select className="form-select form-select-sm" id="tagInput" onChange={e => {setFilterQuery(e.target.value); setFilter("hack_tags")}}>
                         <option value="">Select A Tag</option>
                         <TagList tags={tags} />
                     </select>
@@ -62,7 +63,18 @@ export default function Hacks() {
             </div>
             <br/>
             <HacksList hacks={hacks.filter((hack) => {
-                return filterQuery.toLowerCase() === '' ? hack : hack.hack_tags.toLowerCase().includes(filterQuery.toLowerCase())
+                switch (filter) {
+                    case "hack_name":
+                        return filterQuery.toLowerCase() === '' ? hack : hack.hack_name.toLowerCase().includes(filterQuery.toLowerCase())
+                    case "hack_author":
+                        return filterQuery.toLowerCase() === '' ? hack : hack.hack_author.toLowerCase().includes(filterQuery.toLowerCase())
+                    case "hack_release_date":
+                        return filterQuery.toLowerCase() === '' ? hack : hack.release_date.includes(filterQuery)
+                    case "hack_tags":
+                        return filterQuery.toLowerCase() === '' ? hack : hack.hack_tags.toLowerCase().includes(filterQuery.toLowerCase())
+                    default:
+                        return hack;
+                }
             })} />
         </div>
     );
