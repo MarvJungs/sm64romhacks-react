@@ -5,6 +5,7 @@ export default function Megapack() {
     const [hacks, setHacks] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         document.title = "sm64romhacks - Megapack";
@@ -32,15 +33,15 @@ export default function Megapack() {
 
     return (
         <>
-            <IntroductionText />
-            <NormalMegapackList hacks={hacks} />
+            <IntroductionText setSearchQuery={setSearchQuery} searchQuery={searchQuery}/>
+            <NormalMegapackList hacks={hacks} searchQuery={searchQuery} />
             <br/><br/>
-            <KaizoMegapackList hacks={hacks} />
+            <KaizoMegapackList hacks={hacks} searchQuery={searchQuery} />
         </>
     )
 }
 
-function IntroductionText() {
+function IntroductionText({setSearchQuery, searchQuery}) {
     return (
         <>
             <h1>Grand ROM Hack Megapack</h1>
@@ -59,7 +60,7 @@ function IntroductionText() {
                 </div>
                 <div className='col'>
                     Difficulty: 
-                    <select id='tagInput' className='form-select'>
+                    <select id='tagInput' className='form-select' onChange={e => setSearchQuery(e.target.value)}>
                         <option value="" selected>Select A Difficulty</option>
                         <option value="easy">Easy</option>
                         <option value="normal">Normal</option>
@@ -72,10 +73,27 @@ function IntroductionText() {
     )
 }
 
-function NormalMegapackList({hacks}) {
-    hacks = hacks.filter(function (hack) {
-        return !hack.hack_tags.includes('Kaizo');
-    })
+function NormalMegapackList({hacks, searchQuery}) {
+    if(searchQuery === 'kaizo') {
+        return (
+            <>
+            </>
+        )
+    }
+
+    hacks = hacks.filter((hack) =>  {
+        switch (searchQuery) {
+            case "easy":
+                return hack.hack_tags.includes("Easy");
+            case "normal":
+                return hack.hack_tags.includes("Normal");
+            case "advanced":
+                return hack.hack_tags.includes("Advanced");
+            default:
+                return !hack.hack_tags.includes("Kaizo")
+        }
+    });
+
     return (
         <>
             <h5>Normal Megapack Hacks</h5>
@@ -84,14 +102,22 @@ function NormalMegapackList({hacks}) {
     )
 }
 
-function KaizoMegapackList({hacks}) {
-    hacks = hacks.filter(function (hack) {
+function KaizoMegapackList({hacks, searchQuery}) {
+    hacks = hacks.filter((hack) => {
         return hack.hack_tags.includes('Kaizo');
     })
-    return (
+    if(searchQuery === "easy" || searchQuery === "normal" || searchQuery === "advanced") {
+        return (
+            <>
+            </>
+        )
+    }
+    else {
+        return (
         <>
             <h5>Kaizo Megapack Hacks</h5>
             <HacksList hacks={hacks} />
         </>
-    )
+        )
+    }
 }
