@@ -10,11 +10,13 @@ import kuribo from "../assets/kuribo64.jpg"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDiscord, faTwitch, faYoutube, faTwitter, faPaypal } from "@fortawesome/free-brands-svg-icons";
 import '../App.css';
+import { useState, useEffect } from 'react';
+import {setCookie} from '../cookies.js';
 
 
 export default function Layout() {
     return (
-        <div className="container bg-dark text-white text-center">
+        <div className="container text-white">
           <div className='row justify-content-center'>
             <Header />
             <Outlet />
@@ -25,6 +27,36 @@ export default function Layout() {
 }
 
 function Header() {
+    const [user, setUser] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+      fetch('/api/user/')
+      .then(response => {
+          if(response.ok) {
+              return response.json()
+          }
+          throw response;
+      })
+      .then(data => {
+          setUser({
+            admin: data.admin,
+            data: data.data,
+            logged_in: data.logged_in
+          })
+      })
+      .catch(error => {
+        setError(error);
+      })
+      .finally(setLoading(false))
+    }, []);
+
+    if(loading) return ("Loading...")
+    if(error) return ("Error" + error)
+
+    console.log(user)
+
     return (
       <>
         <nav className="navbar navbar-expand-lg navbar-dark">
@@ -82,6 +114,37 @@ function Header() {
                 <li className="nav-item">
                   <a className="nav-link" href="https://ko-fi.com/marvjungs" target='_blank' rel='noreferrer'>Support</a>
                 </li>
+                {
+                 !user.logged_in ? (
+                    <li className='nav-item'>
+                      <a className='nav-link' href="/login">Login</a>
+                    </li>
+                  ) : (
+                    <li className='nav-item dropdown'>
+                      <a className='nav-link dropdown-toggle' href="#" role='button' data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src={'https://cdn.discordapp.com/avatars/' + user.data.discord_id + "/" + user.data.discord_avatar + ".jpg"} width={16} height={16} />&nbsp;{user.data.discord_username}
+                      </a>
+                      <ul className='dropdown-menu'>
+                        <li>
+                          <a className='dropdown-item' href={'/users/' + user.data.discord_id}>
+                            Profile
+                          </a>
+                        </li>
+                        <hr/>
+                        <li>
+                          <a className='dropdown-item' href="/login/logout.php">
+                            Logout
+                          </a>
+                        </li>
+                        <li>
+                          <a className='dropdown-item text-danger' href='/login/deleteAccount.php'>
+                            Delete Account
+                          </a>
+                        </li>
+                      </ul>
+                    </li>
+                  )
+                }
               </ul>
             </div>
         </nav>

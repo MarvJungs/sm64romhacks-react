@@ -51,5 +51,5 @@
   "devDependencies": {
     "react-router-dom": "^6.21.3"
   },
-  "proxy" : "https://sm64romhacks.com"
+  "proxy" : "http://localhost"
 }
