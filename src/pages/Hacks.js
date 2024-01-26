@@ -55,7 +55,7 @@ export default function Hacks() {
                     default:
                         return hack;
                 }
-            })} />
+            }).sort((a, b) => {return b.total_downloads-a.total_downloads})} />
         </>
     );
 }
@@ -93,7 +93,7 @@ function Hack({hack}) {
             <td><a className="link-underline link-underline-opacity-0" href={"/hacks/" + hack.hack_url}>{hack.hack_name}</a></td>
             <td>{hack.hack_author}</td>
             <td>{hack.release_date}</td>
-            <td><span className="text-muted">Downloads: {hack.total_downloads}</span></td>
+            <td><span className="text-muted text-nowrap">Downloads: {hack.total_downloads}</span></td>
             <td hidden>{hack.hack_tags}</td>
             <AdminButtons hack={hack} />
         </>
