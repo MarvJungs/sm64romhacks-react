@@ -13,6 +13,7 @@ import Megapack from './pages/Megapack';
 import Faq from './pages/Faq';
 import Stardisplay from './pages/Stardisplay'
 import Error from './pages/Error'
+import Streams from './pages/Streams';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -27,6 +28,7 @@ root.render(
           <Route path="/megapack" element={<Megapack />}></Route>
           <Route path='/faq' element={<Faq />}></Route>
           <Route path='/stardisplay' element={<Stardisplay />}></Route>
+          <Route path='/streams' element={<Streams />}></Route>
           <Route path='*' element={<Error />}></Route>
         </Route>
       </Routes>

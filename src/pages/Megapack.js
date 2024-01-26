@@ -43,7 +43,7 @@ export default function Megapack() {
 
 function IntroductionText({setSearchQuery, searchQuery}) {
     return (
-        <>
+        <div className='text-center'>
             <h1>Grand ROM Hack Megapack</h1>
             This megapack offers a selection of major Super Mario 64 ROM Hacks which are universally considered to be the greatest. This is in hope to provide an ideal starter pack which serves as an easily accessible introduction to the world of ROM hacks.<br/><br/>
             <p className='fst-italic'>Contents of this page was last updated: 2024-01-01 (yyyy-mm-dd)</p>
@@ -69,7 +69,7 @@ function IntroductionText({setSearchQuery, searchQuery}) {
                     </select>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

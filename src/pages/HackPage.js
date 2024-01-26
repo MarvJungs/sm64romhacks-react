@@ -9,8 +9,6 @@ export default function HackPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    console.log(params)
-
     useEffect(() => {
         fetch('/api/hacks?hack_name='+params.hack_url)
         .then(response => {
@@ -57,6 +55,7 @@ export default function HackPage() {
         <>
             <h1>{patches[0].hack_name}</h1>
             <PatchesList patches={patches} />
+            <hr/>
             <Description hack={patches} />
         </>
     )
@@ -103,16 +102,16 @@ function Patch({patch}) {
 }
 
 function Description({hack}) {
-    const description = hack[0].hack_description;
+    const description = hack[hack.length-1].hack_description;
 
     return (
-        <>
+        <div className='bg-dark'>
             {
                 reactStringReplace(description, '<br/>', (match, i) => (
                     <br/>
                 ))
             }
-        </>
+        </div>
     )
 }
 
