@@ -59,7 +59,7 @@ function Header() {
 
     return (
       <>
-        <nav className="navbar navbar-expand-lg navbar-dark">
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
           <a className="navbar-brand" href="/">
             <img className="img-responsive d-inline-block align-text-top" src={logo} alt="Logo" width="160" height="90"></img>
           </a>
@@ -156,7 +156,8 @@ function Header() {
 function Footer() {
     const date = new Date();
     return (
-      <footer className="text-center text-white">
+      <footer className="text-center text-white bg-dark">
+        <hr/>
         <div className="container p-4">
           <section className="mb-4">
             <a className="btn btn-outline-light btn-floating m-1" href="https://discord.sm64romhacks.com" role="button">
