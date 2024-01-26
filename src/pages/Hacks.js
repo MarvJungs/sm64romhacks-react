@@ -12,6 +12,7 @@ export default function Hacks() {
     const [error, setError] = useState(null);
     const [filter, setFilter] = useState("");
     const [filterQuery, setFilterQuery] = useState("")
+    const [sortQuery, setSortQuery] = useState("");
 
 
     useEffect(() => {
@@ -41,7 +42,7 @@ export default function Hacks() {
 
     return (
         <>
-            <SearchBar tags={tags} setFilterQuery={setFilterQuery} setFilter={setFilter}/>
+            <SearchBar tags={tags} setFilterQuery={setFilterQuery} setFilter={setFilter} setSortQuery={setSortQuery} />
             <HacksList hacks={hacks.filter((hack) => {
                 switch (filter) {
                     case "hack_name":
@@ -54,8 +55,26 @@ export default function Hacks() {
                         return filterQuery.toLowerCase() === '' ? hack : hack.hack_tags.toLowerCase().includes(filterQuery.toLowerCase())
                     default:
                         return hack;
-                }
-            }).sort((a, b) => {return b.total_downloads-a.total_downloads})} />
+                    }
+                }).sort((a, b) => {
+                    switch (sortQuery) {
+                        case "hack_name_asc":
+                            return a.hack_name.toLowerCase() > b.hack_name.toLowerCase()
+                        case "hack_name_desc":
+                            return b.hack_name.toLowerCase() > a.hack_name.toLowerCase();
+                        case "hack_release_date_asc":
+                            return new Date(a.release_date) - new Date(b.release_date);
+                        case "hack_release_date_desc":
+                            return new Date(b.release_date) - new Date(a.release_date);
+                        case "hack_download_count_asc":
+                            return a.total_downloads - b.total_downloads;
+                        case "hack_download_count_desc":
+                            return b.total_downloads - a.total_downloads;
+                        default:
+                            return a.hack_name.toLowerCase() - b.hack_name.toLowerCase();
+                    }
+                })
+            }/>
         </>
     );
 }
@@ -143,7 +162,7 @@ function TagList({tags}) {
 }
 
 
-function SearchBar({tags, setFilterQuery, setFilter}) {
+function SearchBar({tags, setFilterQuery, setFilter, setSortQuery}) {
     return (
         <div className="row">
             <div className="col">
@@ -159,6 +178,17 @@ function SearchBar({tags, setFilterQuery, setFilter}) {
                 <select className="form-select form-select-sm" id="tagInput" onChange={e => {setFilterQuery(e.target.value); setFilter("hack_tags")}}>
                     <option value="">Select A Tag</option>
                     <TagList tags={tags} />
+                </select>
+            </div>
+            <div className="col">
+                <select className="form-select form-select-sm" id="sortInput" onChange={e => {setSortQuery(e.target.value)}}>
+                    <option value="">Sort By</option>
+                    <option value="hack_name_asc">Hack Name (ASC)</option>
+                    <option value="hack_name_desc">Hack Name (DESC)</option>
+                    <option value="hack_release_date_asc">Release Date (ASC)</option>
+                    <option value="hack_release_date_desc">Release Date (DESC)</option>
+                    <option value="hack_download_count_asc">Download Count (ASC)</option>
+                    <option value="hack_download_count_desc">Download Count (DESC)</option>
                 </select>
             </div>
             <div className="col">
