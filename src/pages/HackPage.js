@@ -32,6 +32,8 @@ export default function HackPage() {
 
     if(loading) return 'Loading...'
     if(error) return "Error" + error
+
+    console.log(images)
     if(params.mode) {
         switch (params.mode) {
             case "editHack":
@@ -57,6 +59,7 @@ export default function HackPage() {
             <PatchesList patches={patches} />
             <hr/>
             <Description hack={patches} />
+            <ImageList images={images} />
         </>
     )
 }
@@ -93,7 +96,7 @@ function Patch({patch}) {
         <>
             <td>{patch.hack_name}</td>
             <td>{patch.hack_version}</td>
-            <td><span className="text-muted">Downloads: {patch.hack_downloads}</span></td>
+            <td><a href={`/patch/${patch.hack_url}`}>Download</a><br/><span className="text-muted">Downloads: {patch.hack_downloads}</span></td>
             <td>{patch.authors}</td>
             <td>{patch.hack_starcount}</td>
             <td>{patch.hack_release_date}</td>
@@ -116,37 +119,43 @@ function Description({hack}) {
 }
 
 function ImageList({images}) {
-    return (
-        <>
-            
-        </>
-    )
+    if(images.length !== 0) {
+        return (
+            <div className='container'>
+                <div className='row'>
+                    {images.map((image) => (
+                        <Image image={image} />
+                    ))}
+                </div>
+            </div>
+        )
+    }
 }
 
 function Image({image}) {
     return (
-        <>
-
-        </>
+        <div className='col'>
+            <img className='p-3' width={320} height={240} src={'/api/images/' + image} alt={image}></img>
+        </div>
     )
 }
 
 function EditHack({hack}) {
 
-    const is_megapack = hack[0].hack_megapack == 1;
+    const is_megapack = hack[0].hack_megapack === 1;
 
     return (
         <>
-            <form className='form-floating'>
+            <form action={e => displayData(e)}>
                 <div className='row mb-3'>
-                    <label className='col-form-label col-sm-2' htmlFor="hack_name">Hack Name:</label>
-                    <div className='col-auto'>
+                    <label className='col-sm-2 col-form-label' htmlFor="hack_name">Hack Name:</label>
+                    <div className='col-sm-10'>
                         <input id='old_hack_name' className='form-control' type='hidden' name='hack_old_name' value={hack[0].hack_name}></input>
                         <input className='form-control' type='text' name='hack_new_name' value={hack[0].hack_name}></input>
                     </div>
                 </div>
                 <fieldset className='row mb-3'>
-                    <label className='col-form-label col-sm-2 pt-0'>
+                    <label className='col-sm-2 col-form-label pt-0'>
                         Recommend Versions:
                     </label>
                     <div className='col-auto'>
@@ -161,7 +170,7 @@ function EditHack({hack}) {
                     </div>
                 </fieldset>
                 <div className='row mb-3'>
-                    <label className='col-form-label col-sm-2 pt-0'>
+                    <label className='col-sm-2 col-form-label pt-0'>
                         Megapack:
                     </label>
                     <div className='col-auto'>
@@ -173,24 +182,42 @@ function EditHack({hack}) {
                     </div>
                 </div>
                 <div className='row mb-3'>
-                    <label className='col-form-label col-sm-2 pt-0'>
+                    <label className='col-sm-2 col-form-label pt-0'>
                         Hack Tags:
                     </label>
-                    <div className='col-auto'>
+                    <div className='col-sm-5'>
                         <input id='flexCheckDefault' className='form-control' type='text' name="hack_tags" value={hack[0].hack_tags}></input>
                     </div>
                 </div>  
                 <div className='row mb-3'>
+                    <label className='col-sm-2 col-form-label pt-0'>
+                            Images
+                    </label>
+                    <div className='col-sm-5'>
+                        <input className='form-control' type='file' name='hack_images[]' multiple></input>
+                    </div> 
+                </div>
+                <div className='row mb-3'>
                     <label className='col-form-label col-sm-2 pt-0'>
                         Description:
                     </label>
-                    <div className='col-auto'>
+                    <div className='col-sm-10'>
                         <textarea className='form-control' name='hack_description' rows={10}></textarea>
                     </div>
-                </div>                          
+                </div>
+                <div className='row mb-3'>
+                    <div className='col-sm-10'>
+                        <button className='btn btn-secondary align-middle' type='submit'>Save Changes</button>
+                    </div>
+                </div>                         
             </form>
         </>
     )
+}
+
+function displayData(e) {
+    e.preventDefault();
+    console.log(e)
 }
 
 function DeleteHack() {

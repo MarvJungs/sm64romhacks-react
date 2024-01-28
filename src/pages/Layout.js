@@ -89,6 +89,11 @@ function Header() {
                     <li><a className="dropdown-item" href="/events/ssrm2021">SSRM2021</a></li>
                     <li><a className="dropdown-item" href="/events/wsrm2021">WSRM2021</a></li>
                     <li><a className="dropdown-item" href="/events/ssrm2020">SSRM2020</a></li>
+                    <li><a className='dropdown-item' href="/events/wsrm2020">WSRM2020</a></li>
+                    <li><a className="dropdown-item" href="/events/ssrm2019">SSRM2019</a></li>
+                    <li><a className='dropdown-item' href="/events/wsrm2019">WSRM2019</a></li>
+                    <li><a className="dropdown-item" href="/events/ssrm2018">SSRM2018</a></li>
+                    <li><a className='dropdown-item' href="/events/wsrm2018">WSRM2018</a></li>
                   </ul>
                 </li>
                 <li className="nav-item dropdown">
