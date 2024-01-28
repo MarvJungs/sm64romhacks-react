@@ -33,7 +33,7 @@ export default function Megapack() {
 
     return (
         <>
-            <IntroductionText setSearchQuery={setSearchQuery} searchQuery={searchQuery}/>
+            <IntroductionText setSearchQuery={setSearchQuery} />
             <NormalMegapackList hacks={hacks} searchQuery={searchQuery} />
             <br/><br/>
             <KaizoMegapackList hacks={hacks} searchQuery={searchQuery} />
@@ -41,9 +41,9 @@ export default function Megapack() {
     )
 }
 
-function IntroductionText({setSearchQuery, searchQuery}) {
+function IntroductionText({setSearchQuery}) {
     return (
-        <div className='text-center'>
+        <span className='text-center'>
             <h1>Grand ROM Hack Megapack</h1>
             This megapack offers a selection of major Super Mario 64 ROM Hacks which are universally considered to be the greatest. This is in hope to provide an ideal starter pack which serves as an easily accessible introduction to the world of ROM hacks.<br/><br/>
             <p className='fst-italic'>Contents of this page was last updated: 2024-01-01 (yyyy-mm-dd)</p>
@@ -59,17 +59,21 @@ function IntroductionText({setSearchQuery, searchQuery}) {
                     </a>
                 </div>
                 <div className='col'>
-                    Difficulty: 
-                    <select id='tagInput' className='form-select' onChange={e => setSearchQuery(e.target.value)}>
-                        <option value="" selected>Select A Difficulty</option>
-                        <option value="easy">Easy</option>
-                        <option value="normal">Normal</option>
-                        <option value="advanced">Advanced</option>
-                        <option value="kaizo">Kaizo</option>
-                    </select>
+                    <div className='row'>
+                        Difficulty: 
+                    </div>
+                    <div className='row'>
+                        <select id='tagInput' className='form-select w-auto' onChange={e => setSearchQuery(e.target.value)}>
+                            <option value="" selected>Select A Difficulty</option>
+                            <option value="easy">Easy</option>
+                            <option value="normal">Normal</option>
+                            <option value="advanced">Advanced</option>
+                            <option value="kaizo">Kaizo</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-        </div>
+        </span>
     )
 }
 
