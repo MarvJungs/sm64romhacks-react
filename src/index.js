@@ -14,6 +14,7 @@ import Faq from './pages/Faq';
 import Stardisplay from './pages/Stardisplay'
 import Error from './pages/Error'
 import Streams from './pages/Streams';
+import Event from './pages/Event';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -26,6 +27,7 @@ root.render(
           <Route path="/hacks" element={<Hacks />}></Route>
           <Route path="/hacks/:mode?/:hack_url" element={<HackPage />}></Route>
           <Route path="/megapack" element={<Megapack />}></Route>
+          <Route path='/events/:event_name' element={<Event />}></Route>
           <Route path='/faq' element={<Faq />}></Route>
           <Route path='/stardisplay' element={<Stardisplay />}></Route>
           <Route path='/streams' element={<Streams />}></Route>
