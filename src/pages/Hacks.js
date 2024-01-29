@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import {useOutletContext} from 'react-router-dom';
 import addIcon from '../assets/add.svg'
 import editIcon from '../assets/edit.svg'
 import deleteIcon from '../assets/delete.svg'
@@ -13,7 +14,7 @@ export default function Hacks() {
     const [filter, setFilter] = useState("");
     const [filterQuery, setFilterQuery] = useState("")
     const [sortQuery, setSortQuery] = useState("");
-
+    const context = useOutletContext();
 
     useEffect(() => {
         document.title = "sm64romhacks - Patches";
@@ -74,16 +75,17 @@ export default function Hacks() {
                             return a.hack_name.toLowerCase() - b.hack_name.toLowerCase();
                     }
                 })
-            }/>
+            } context={context}/>
         </>
     );
 }
 
-export function HacksList({hacks}) {
+export function HacksList({hacks, context}) {
+    console.log(context)
     const hackItems = 
         Array.from(hacks).map((hack, index) => (
             <tr key={index}>
-                <Hack hack={hack} />
+                <Hack hack={hack} context={context} />
             </tr>
         ));
 
@@ -97,7 +99,9 @@ export function HacksList({hacks}) {
                         <th>Initial Release Date</th>
                         <th>Downloads</th>
                         <th hidden>Tag</th>
-                        <AdminHeader />
+                        {context.user.admin ? (
+                            <AdminHeader />
+                        ) : <></>}
                     </tr>
                     {hackItems}
                 </tbody>
@@ -106,7 +110,7 @@ export function HacksList({hacks}) {
     )
 }
 
-function Hack({hack}) {
+function Hack({hack, context}) {
     return (
         <>
             <td><a className="link-underline link-underline-opacity-0" href={"/hacks/" + hack.hack_url}>{hack.hack_name}</a></td>
@@ -114,7 +118,9 @@ function Hack({hack}) {
             <td>{hack.release_date}</td>
             <td><span className="text-muted text-nowrap">Downloads: {hack.total_downloads}</span></td>
             <td hidden>{hack.hack_tags}</td>
-            <AdminButtons hack={hack} />
+            {context.user.admin ? (
+                <AdminButtons hack={hack} />
+            ) : <></>}
         </>
     )
 }

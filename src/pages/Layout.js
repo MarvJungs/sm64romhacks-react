@@ -11,52 +11,48 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDiscord, faTwitch, faYoutube, faTwitter, faPaypal } from "@fortawesome/free-brands-svg-icons";
 import '../App.css';
 import { useState, useEffect } from 'react';
-import {setCookie} from '../cookies.js';
 
 
 export default function Layout() {
+  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/user/')
+    .then(response => {
+        if(response.ok) {
+            return response.json()
+        }
+        throw response;
+    })
+    .then(data => {
+        setUser({
+          admin: data.admin,
+          data: data.data,
+          logged_in: data.logged_in
+        })
+    })
+    .catch(error => {
+      setError(error);
+    })
+    .finally(setLoading(false))
+  }, []);
+
     return (
         <div className="container text-white">
           <div className='row justify-content-center'>
-            <Header />
-            <Outlet />
+            <Header user={user}/>
+            <Outlet context={{user: user,
+                              error: error,
+                              loading: loading}}/>
             <Footer />
           </div>
         </div>
     )
 }
 
-function Header() {
-    const [user, setUser] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-      fetch('/api/user/')
-      .then(response => {
-          if(response.ok) {
-              return response.json()
-          }
-          throw response;
-      })
-      .then(data => {
-          setUser({
-            admin: data.admin,
-            data: data.data,
-            logged_in: data.logged_in
-          })
-      })
-      .catch(error => {
-        setError(error);
-      })
-      .finally(setLoading(false))
-    }, []);
-
-    if(loading) return ("Loading...")
-    if(error) return ("Error" + error)
-
-    console.log(user)
-
+function Header({user}) {
     return (
       <>
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">

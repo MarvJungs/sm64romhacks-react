@@ -1,11 +1,13 @@
 import {HacksList} from './Hacks.js';
 import {useState, useEffect} from 'react';
+import {useOutletContext} from 'react-router-dom';
 
 export default function Megapack() {
     const [hacks, setHacks] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
+    const context = useOutletContext();
 
     useEffect(() => {
         document.title = "sm64romhacks - Megapack";
@@ -34,9 +36,9 @@ export default function Megapack() {
     return (
         <>
             <IntroductionText setSearchQuery={setSearchQuery} />
-            <NormalMegapackList hacks={hacks} searchQuery={searchQuery} />
+            <NormalMegapackList hacks={hacks} searchQuery={searchQuery} context={context} />
             <br/><br/>
-            <KaizoMegapackList hacks={hacks} searchQuery={searchQuery} />
+            <KaizoMegapackList hacks={hacks} searchQuery={searchQuery} context={context} />
         </>
     )
 }
@@ -77,7 +79,7 @@ function IntroductionText({setSearchQuery}) {
     )
 }
 
-function NormalMegapackList({hacks, searchQuery}) {
+function NormalMegapackList({hacks, searchQuery, context}) {
     if(searchQuery === 'kaizo') {
         return (
             <>
@@ -101,12 +103,12 @@ function NormalMegapackList({hacks, searchQuery}) {
     return (
         <>
             <h5>Normal Megapack Hacks</h5>
-            <HacksList hacks={hacks} />
+            <HacksList hacks={hacks} context={context} />
         </>
     )
 }
 
-function KaizoMegapackList({hacks, searchQuery}) {
+function KaizoMegapackList({hacks, searchQuery, context}) {
     hacks = hacks.filter((hack) => {
         return hack.hack_tags.includes('Kaizo');
     })
@@ -120,7 +122,7 @@ function KaizoMegapackList({hacks, searchQuery}) {
         return (
         <>
             <h5>Kaizo Megapack Hacks</h5>
-            <HacksList hacks={hacks} />
+            <HacksList hacks={hacks} context={context} />
         </>
         )
     }
