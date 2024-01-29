@@ -146,7 +146,7 @@ function EditHack({hack}) {
 
     return (
         <>
-            <form action={e => displayData(e)}>
+            <form onSubmit={displayData} encType='multipart/form-data' >
                 <div className='row mb-3'>
                     <label className='col-sm-2 col-form-label' htmlFor="hack_name">Hack Name:</label>
                     <div className='col-sm-10'>
@@ -217,7 +217,9 @@ function EditHack({hack}) {
 
 function displayData(e) {
     e.preventDefault();
-    console.log(e)
+    Array.from(e.target).forEach(element => {
+        console.log(element, element.value)
+    });
 }
 
 function DeleteHack() {
