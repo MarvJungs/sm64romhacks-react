@@ -29,10 +29,12 @@ export default function Streams() {
     }, []);
 
 
+
     if(loading) return "Loading..."
     if(error) return "Error" + error
 
-    return <StreamsList streams={streams}/>
+    if(streams.length !== 0) return <StreamsList streams={streams}/>
+    else return "Nobody is currently streaming!"
 
 }
 
@@ -47,7 +49,7 @@ function StreamsList({streams}) {
         return (
             <div className='stream-container'>
                 <a href={"https://www.twitch.tv/" + user_login} target='_blank' rel='noreferrer'>
-                    <img src={thumbnail} alt="stream thumbnail" />
+                    <img src={thumbnail} alt={user_login + "stream thumbnail"} />
                 </a>
                 <h2>{title}</h2>
                 <h2>{user_name} ({viewer_count} Viewers)</h2>
