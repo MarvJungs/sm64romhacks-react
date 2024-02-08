@@ -9,14 +9,19 @@ import dd64 from "../assets/64DD_logo.png"
 import kuribo from "../assets/kuribo64.jpg"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDiscord, faTwitch, faYoutube, faTwitter, faPaypal } from "@fortawesome/free-brands-svg-icons";
-import '../App.css';
+//import '../App.css';
 import { useState, useEffect } from 'react';
+import Container from 'react-bootstrap/Container';
+import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+import Nav from 'react-bootstrap/Nav';
 
 
 export default function Layout() {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [time, setTime] = useState(null);
 
   useEffect(() => {
     fetch('/api/user/')
@@ -38,117 +43,95 @@ export default function Layout() {
     })
     .finally(setLoading(false))
   }, []);
+  useEffect(() => {
+    setInterval(() => {
+      const t = new Date();
+      const options = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: false
+      };
+      const time = new Intl.DateTimeFormat('sv', options).format(t);
+      setTime(time);
+    }, 1000);
+  }, [time]);
 
     return (
-        <div className="container text-white">
-          <div className='row justify-content-center'>
-            <Header user={user}/>
-            <Outlet context={{user: user,
-                              error: error,
-                              loading: loading}}/>
-            <Footer />
-          </div>
-        </div>
+          <Container fluid={true}>
+            <Container>
+              <Header user={user}/>
+              <p className='text-end'>{time}</p>
+              <Outlet context={{user: user,
+                                error: error,
+                                loading: loading}}/>
+              <Footer />
+              </Container>
+          </Container>
     )
 }
 
 function Header({user}) {
     return (
       <>
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-          <a className="navbar-brand" href="/">
-            <img className="img-responsive d-inline-block align-text-top" src={logo} alt="Logo" width="160" height="90"></img>
-          </a>
-            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarNavDropdown">
-              <ul className="navbar-nav">
-                <li className="nav-item">
-                  <a className="nav-link" href="/hacks">ROM Hacks</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="/megapack">Megapack</a>
-                </li>
-                <li className="nav-item dropdown">
-                  <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Events
-                  </a>
-                  <ul className="dropdown-menu">
-                    <li><a className="dropdown-item" href="/events/wsrm2024">WSRM2024</a></li>
-                    <li><a className="dropdown-item" href="/events/league2023">League 2023</a></li>
-                    <li><a className="dropdown-item" href="/events/ssrm2023">SSRM2023</a></li>
-                    <li><a className="dropdown-item" href="/events/wsrm2023">WSRM2023</a></li>
-                    <li><a className="dropdown-item" href="/events/league2022">League 2022</a></li>
-                    <li><a className="dropdown-item" href="/events/ssrm2022">SSRM2022</a></li>
-                    <li><a className="dropdown-item" href="/events/wsrm2022">WSRM2022</a></li>
-                    <li><a className="dropdown-item" href="/events/ssrm2021">SSRM2021</a></li>
-                    <li><a className="dropdown-item" href="/events/wsrm2021">WSRM2021</a></li>
-                    <li><a className="dropdown-item" href="/events/ssrm2020">SSRM2020</a></li>
-                    <li><a className='dropdown-item' href="/events/wsrm2020">WSRM2020</a></li>
-                    <li><a className="dropdown-item" href="/events/ssrm2019">SSRM2019</a></li>
-                    <li><a className='dropdown-item' href="/events/wsrm2019">WSRM2019</a></li>
-                    <li><a className="dropdown-item" href="/events/ssrm2018">SSRM2018</a></li>
-                    <li><a className='dropdown-item' href="/events/wsrm2018">WSRM2018</a></li>
-                  </ul>
-                </li>
-                <li className="nav-item dropdown">
-                  <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Gameplay Tools
-                  </a>
-                  <ul className="dropdown-menu">
-                    <li><a className="dropdown-item" href="/codes">Code</a></li>
-                    <li><a className="dropdown-item" href="/stardisplay" target='_blank' rel='noreferrer'>Star Display</a></li>
-                    <li><a className="dropdown-item" href="/patcher">Online Patcher</a></li>
-                    <li><a className="dropdown-item" href="/plugins" target='_blank' rel='noreferrer'>Plugin Guide</a></li>
-                  </ul>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="/faq" target='_blank'>FAQ</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="/streams">Streams</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="https://discord.sm64romhacks.com" target='_blank' rel='noreferrer'>Discord</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="https://ko-fi.com/marvjungs" target='_blank' rel='noreferrer'>Support</a>
-                </li>
-                {
-                 !user.logged_in ? (
-                    <li className='nav-item'>
-                      <a className='nav-link' href="/login">Login</a>
-                    </li>
-                  ) : (
-                    <li className='nav-item dropdown'>
-                      <a className='nav-link dropdown-toggle' href="#" role='button' data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src={'https://cdn.discordapp.com/avatars/' + user.data.discord_id + "/" + user.data.discord_avatar + ".jpg"} width={16} height={16} />&nbsp;{user.data.discord_username}
-                      </a>
-                      <ul className='dropdown-menu'>
-                        <li>
-                          <a className='dropdown-item' href={'/users/' + user.data.discord_id}>
-                            Profile
-                          </a>
-                        </li>
-                        <hr/>
-                        <li>
-                          <a className='dropdown-item' href="/login/logout.php">
-                            Logout
-                          </a>
-                        </li>
-                        <li>
-                          <a className='dropdown-item text-danger' href='/login/deleteAccount.php'>
-                            Delete Account
-                          </a>
-                        </li>
-                      </ul>
-                    </li>
-                  )
-                }
-              </ul>
-            </div>
-        </nav>
+        <Navbar collapseOnSelect variant='dark' expand='lg'>
+          <Container>
+            <Navbar.Brand href="/">
+              <img className="d-inline-block align-top" src={logo} alt="Logo" width="160" height="90"></img>
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls='basic-navbar-nav'></Navbar.Toggle>
+            <Navbar.Collapse id='basic-navbar-nav'></Navbar.Collapse>
+            <Nav className='me-auto'>
+              <Nav.Link href='/hacks'>ROM Hacks</Nav.Link>
+              <Nav.Link href='/megapack'>Megapack</Nav.Link>
+              <NavDropdown title='Events' id='basic-nav-dropdown'>
+                <NavDropdown.Item href='/events/wsrm2024'>WSRM2024</NavDropdown.Item>
+                <NavDropdown.Item href='/events/league2023'>League 2023</NavDropdown.Item>
+                <NavDropdown.Item href='/events/ssrm2023'>SSRM2023</NavDropdown.Item>
+                <NavDropdown.Item href='/events/wsrm2023'>WSRM2023</NavDropdown.Item>
+                <NavDropdown.Item href='/events/league2022'>League 2022</NavDropdown.Item>
+                <NavDropdown.Item href='/events/ssrm2022'>SSRM2022</NavDropdown.Item>
+                <NavDropdown.Item href='/events/wsrm2022'>WSRM2022</NavDropdown.Item>
+                <NavDropdown.Item href='/events/ssrm2021'>SSRM2021</NavDropdown.Item>
+                <NavDropdown.Item href='/events/wsrm2021'>WSRM2021</NavDropdown.Item>
+                <NavDropdown.Item href='/events/ssrm2020'>SSRM2020</NavDropdown.Item>
+                <NavDropdown.Item href='/events/wsrm2020'>WSRM2020</NavDropdown.Item>
+                <NavDropdown.Item href='/events/ssrm2019'>SSRM2019</NavDropdown.Item>
+                <NavDropdown.Item href='/events/wsrm2019'>WSRM2019</NavDropdown.Item>
+                <NavDropdown.Item href='/events/ssrm2018'>SSRM2018</NavDropdown.Item>
+                <NavDropdown.Item href='/events/wsrm2018'>WSRM2018</NavDropdown.Item>
+              </NavDropdown>
+              <NavDropdown title='Gameplay Tools' id='basic-nav-dropdown'>
+                <NavDropdown.Item href='/codes'>Codes</NavDropdown.Item>
+                <NavDropdown.Item href='/stardisplay'>Star Display</NavDropdown.Item>
+                <NavDropdown.Item href='/patcher'>Online Patcher</NavDropdown.Item>
+                <NavDropdown.Item href='/plugins'>Plugin Guide</NavDropdown.Item>
+              </NavDropdown>
+              <Nav.Link href='/faq'>FAQ</Nav.Link>
+              <Nav.Link href='/streams'>Streams</Nav.Link>
+              <Nav.Link href='/discord'>Discord</Nav.Link>
+              <Nav.Link href='/support'>Support!</Nav.Link>
+              {
+                !user.logged_in ? (
+                  <Nav.Link href='/login'>Login</Nav.Link>
+                ) : (
+                  <>
+                    <img src={'https://cdn.discordapp.com/avatars/' + user.data.discord_id + "/" + user.data.discord_avatar + ".jpg"} width={32} height={32} alt='' />
+                    <NavDropdown title={user.data.discord_username} id='basic-nav-dropdown'>
+                      <NavDropdown.Item href={'/users/'.concat(user.data.discord_id)}>Profile</NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item href='/login/logout.php'>Logout</NavDropdown.Item>
+                      <NavDropdown.Item href='/login/deleteAccount.php'>Delete Account</NavDropdown.Item>
+                    </NavDropdown>
+                  </>
+                )
+              }
+            </Nav>
+          </Container>
+        </Navbar>
         <hr/>
       </>
     );

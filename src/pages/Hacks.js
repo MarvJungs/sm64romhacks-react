@@ -3,6 +3,11 @@ import {useOutletContext} from 'react-router-dom';
 import addIcon from '../assets/add.svg'
 import editIcon from '../assets/edit.svg'
 import deleteIcon from '../assets/delete.svg'
+import Table from 'react-bootstrap/Table';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 
 
 
@@ -67,6 +72,10 @@ export default function Hacks() {
                             return new Date(a.release_date) - new Date(b.release_date);
                         case "hack_release_date_desc":
                             return new Date(b.release_date) - new Date(a.release_date);
+                        case "hack_starcount_asc":
+                            return a.hack_starcount - b.hack_starcount;
+                        case "hack_starcount_desc":
+                            return b.hack_starcount - a.hack_starcount;
                         case "hack_download_count_asc":
                             return a.total_downloads - b.total_downloads;
                         case "hack_download_count_desc":
@@ -81,7 +90,6 @@ export default function Hacks() {
 }
 
 export function HacksList({hacks, context}) {
-    console.log(context)
     const hackItems = 
         Array.from(hacks).map((hack, index) => (
             <tr key={index}>
@@ -90,23 +98,24 @@ export function HacksList({hacks, context}) {
         ));
 
     return (
-        <div className="table-responsive">
-            <table className="table-sm table-bordered" id="hacksTable">
-                <tbody>
-                    <tr className="fw-bold">
-                        <th>Hackname</th>
-                        <th>Creator</th>
-                        <th>Initial Release Date</th>
-                        <th>Downloads</th>
-                        <th hidden>Tag</th>
-                        {context.user.admin ? (
-                            <AdminHeader />
-                        ) : <></>}
-                    </tr>
-                    {hackItems}
-                </tbody>
-            </table>
-        </div>
+        <Table bordered hover variant="dark">
+            <thead>
+                <tr className="fw-bold">
+                    <th>Hackname</th>
+                    <th>Creator</th>
+                    <th>Initial Release Date</th>
+                    <th>Starcount</th>
+                    <th>Downloads</th>
+                    <th hidden>Tag</th>
+                    {context.user.admin ? (
+                        <AdminHeader />
+                    ) : <></>}
+                </tr>
+            </thead>
+            <tbody>
+                {hackItems}
+            </tbody>
+        </Table>
     )
 }
 
@@ -116,6 +125,7 @@ function Hack({hack, context}) {
             <td><a className="link-underline link-underline-opacity-0" href={"/hacks/" + hack.hack_url}>{hack.hack_name}</a></td>
             <td>{hack.hack_author}</td>
             <td>{hack.release_date}</td>
+            <td>{hack.hack_starcount}</td>
             <td><span className="text-muted text-nowrap">Downloads: {hack.total_downloads}</span></td>
             <td hidden>{hack.hack_tags}</td>
             {context.user.admin ? (
@@ -129,7 +139,7 @@ function AdminHeader() {
     if(window.location.pathname === '/hacks'){
         return (
             <>
-                <th className="border border-dark" colSpan="2"><a className="btn btn-success text-nowrap"><img src={addIcon} alt=""></img></a></th>
+                <th className="border border-dark" colSpan={2}><Button variant="success"><img src={addIcon} alt=""></img></Button></th>
             </>
         )
     
@@ -141,8 +151,8 @@ function AdminButtons({hack}) {
     if(window.location.pathname === '/hacks') 
     return (
         <>
-            <td className="border border-dark"><a className="btn btn-danger text-nowarp" href={"/hacks/deleteHack/"+hack.hack_url}><img src={deleteIcon} alt=""></img></a></td>
-            <td className="border border-dark"><a className="btn btn-info text-nowrap" href={"/hacks/editHack/"+hack.hack_url}><img src={editIcon} alt=""></img></a></td>
+            <td className="border border-dark"><Button variant="danger" href={"/hacks/deleteHack/"+hack.hack_url}><img src={deleteIcon} alt=""></img></Button></td>
+            <td className="border border-dark"><Button variant="info" href={"/hacks/editHack/"+hack.hack_url}><img src={editIcon} alt=""></img></Button></td>
         </>
     )
 }
@@ -170,36 +180,38 @@ function TagList({tags}) {
 
 function SearchBar({tags, setFilterQuery, setFilter, setSortQuery}) {
     return (
-        <div className="row">
-            <div className="col">
-                <input type="text" id="hackNamesInput" placeholder="Search for Hacknames.." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_name")}} />
-            </div>
-            <div className="col">
-                <input type="text" id="authorNamesInput" placeholder="Search for hackcreators.." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_author")}} />
-            </div>
-            <div className="col">
-                <input type="text" id="hackDatesInput" placeholder="Search for Date (yyyy-mm-dd).." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_release_date")}} />
-            </div>
-            <div className="col">
-                <select className="form-select form-select-sm" id="tagInput" onChange={e => {setFilterQuery(e.target.value); setFilter("hack_tags")}}>
+        <Row className="mb-3">
+            <Col>
+                <Form.Control type="text" placeholder="Search for Hacknames..." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_name")}} />
+            </Col>
+            <Col>
+                <Form.Control type="text" placeholder="Search for hackcreators.." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_author")}} />
+            </Col>
+            <Col>
+                <Form.Control type="text" placeholder="Search for Date (yyyy-mm-dd).." onKeyUp={e => {setFilterQuery(e.target.value); setFilter("hack_release_date")}} />
+            </Col>
+            <Col>
+                <Form.Select onChange={e => {setFilterQuery(e.target.value); setFilter("hack_tags")}}>
                     <option value="">Select A Tag</option>
                     <TagList tags={tags} />
-                </select>
-            </div>
-            <div className="col">
-                <select className="form-select form-select-sm" id="sortInput" onChange={e => {setSortQuery(e.target.value)}}>
+                </Form.Select>
+            </Col>
+            <Col>
+                <Form.Select onChange={e => {setSortQuery(e.target.value)}}>
                     <option value="">Sort By</option>
                     <option value="hack_name_asc">Hack Name (ASC)</option>
                     <option value="hack_name_desc">Hack Name (DESC)</option>
                     <option value="hack_release_date_asc">Release Date (ASC)</option>
                     <option value="hack_release_date_desc">Release Date (DESC)</option>
+                    <option value="hack_starcount_asc">Starcount (ASC)</option>
+                    <option value="hack_starcount_desc">Starcount (DESC)</option>
                     <option value="hack_download_count_asc">Download Count (ASC)</option>
                     <option value="hack_download_count_desc">Download Count (DESC)</option>
-                </select>
-            </div>
-            <div className="col">
-                <a className="btn btn-primary" href="/hacks/random.php">Random</a>
-            </div>
-        </div>
+                </Form.Select>
+            </Col>
+            <Col>
+                <Button variant="primary" href="/hacks/random.php">Random</Button>
+            </Col>
+        </Row>
     )
 }

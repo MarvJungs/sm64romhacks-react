@@ -1,4 +1,5 @@
 import {useState, useEffect} from 'react';
+import Table from 'react-bootstrap/Table';
 
 export function SRMPage({id}) {
     const [event, setEvent] = useState(null);
@@ -47,42 +48,40 @@ export function SRMPage({id}) {
 function Schedule({schedule}) {
     return (
         <>
-            <div className='table-responsive'>
-                <table className='table-sm table-bordered'>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Time</th>
-                            {schedule.columns.map((col) => {
-                                return (
-                                    <>
-                                        <th>{col}</th>
-                                    </>
-                                )
-                            })}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {schedule.items.map((item) => {
+            <Table responsive hover bordered size='sm' >
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        {schedule.columns.map((col) => {
                             return (
                                 <>
-                                    <tr>
-                                        <td>{convertTimestampToDate(item.scheduled_t)}</td>
-                                        <td>{convertTimestampToTime(item.scheduled_t)}</td>
-                                        {item.data.map((runData) => {
-                                            return (
-                                                <td>
-                                                    {runData}
-                                                </td>
-                                            )
-                                        })}
-                                    </tr>
+                                    <th>{col}</th>
                                 </>
                             )
                         })}
-                    </tbody>
-                </table>
-            </div>
+                    </tr>
+                </thead>
+                <tbody>
+                    {schedule.items.map((item) => {
+                        return (
+                            <>
+                                <tr>
+                                    <td>{convertTimestampToDate(item.scheduled_t)}</td>
+                                    <td>{convertTimestampToTime(item.scheduled_t)}</td>
+                                    {item.data.map((runData) => {
+                                        return (
+                                            <td>
+                                                {runData}
+                                            </td>
+                                        )
+                                    })}
+                                </tr>
+                            </>
+                        )
+                    })}
+                </tbody>
+            </Table>
 
         </>
     )
@@ -94,7 +93,7 @@ function Ticker({ticker}) {
 
     return (
         <>
-            <table className='table-sm table-bordered table-warning'>
+            <Table responsive size='sm' bordered variant='warning'>
                 <thead>
                     <tr>
                         <th>
@@ -115,7 +114,7 @@ function Ticker({ticker}) {
                         </td>
                     </tr>
                 </tbody>
-            </table>
+            </Table>
         </>
     )
 }

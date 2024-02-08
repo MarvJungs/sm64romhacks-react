@@ -1,6 +1,10 @@
 import {HacksList} from './Hacks.js';
 import {useState, useEffect} from 'react';
 import {useOutletContext} from 'react-router-dom';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form'
 
 export default function Megapack() {
     const [hacks, setHacks] = useState(null);
@@ -49,32 +53,32 @@ function IntroductionText({setSearchQuery}) {
             <h1>Grand ROM Hack Megapack</h1>
             This megapack offers a selection of major Super Mario 64 ROM Hacks which are universally considered to be the greatest. This is in hope to provide an ideal starter pack which serves as an easily accessible introduction to the world of ROM hacks.<br/><br/>
             <p className='fst-italic'>Contents of this page was last updated: 2024-01-01 (yyyy-mm-dd)</p>
-            <div className='row'>
-                <div className='col btn btn-group-lg'>
-                    <a className='btn btn-primary' href='Grand%20Rom%Hack%20Megapack%202023%20(Final%20Edition).zip'>
+            <Row>
+                <Col className='d-grid'>
+                    <Button variant='primary' size='lg' href='Grand%20Rom%Hack%20Megapack%202023%20(Final%20Edition).zip'>
                         Download Megapack
-                    </a>
-                </div>
-                <div className='col btn btn-group-lg'>
-                    <a className='btn btn-primary' href='Grand%20SM64%Kaizo%20Megapack%202023%20(Final%20Edition).zip'>
+                    </Button>
+                </Col>
+                <Col className='d-grid'>
+                    <Button variant='primary' size='lg' href='Grand%20SM64%Kaizo%20Megapack%202023%20(Final%20Edition).zip'>
                         Download KAIZO Megapack
-                    </a>
-                </div>
-                <div className='col'>
-                    <div className='row'>
+                    </Button>
+                </Col>
+                <Col>
+                    <Row>
                         Difficulty: 
-                    </div>
-                    <div className='row'>
-                        <select id='tagInput' className='form-select w-auto' onChange={e => setSearchQuery(e.target.value)}>
+                    </Row>
+                    <Row>
+                        <Form.Select onChange={e => setSearchQuery(e.target.value)}>
                             <option value="" selected>Select A Difficulty</option>
                             <option value="easy">Easy</option>
                             <option value="normal">Normal</option>
                             <option value="advanced">Advanced</option>
                             <option value="kaizo">Kaizo</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+                        </Form.Select>
+                    </Row>
+                </Col>
+            </Row>
         </span>
     )
 }
