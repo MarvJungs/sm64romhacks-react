@@ -1,6 +1,9 @@
 import {useState, useEffect} from 'react';
 import { useParams } from "react-router-dom"
 import reactStringReplace from 'react-string-replace';
+import { Helmet } from 'react-helmet';
+import Error from './Error';
+import Table from 'react-bootstrap/Table';
 
 export default function HackPage() {
     const params = useParams();
@@ -32,6 +35,7 @@ export default function HackPage() {
 
     if(loading) return 'Loading...'
     if(error) return "Error" + error
+    if(!patches[0]) return <Error />
 
     console.log(images)
     if(params.mode) {
@@ -55,7 +59,20 @@ export default function HackPage() {
 
     return (
         <>
-            <h1>{patches[0].hack_name}</h1>
+            <Helmet>
+                <title>{"sm64romhacks - " + patches[0].hack_name }</title>
+                <meta property='og:title' content={patches[0].hack_name}></meta>
+                <meta property='og:type' content='website'></meta>
+                <meta property='og:url' content={"https://sm64romhacks.com/hacks/" + patches[0].hack_url}></meta>
+                <meta property='og:site_name' content='sm64romhacks.com'></meta>
+                <meta property='og:description' content={patches[0].hack_description}></meta>
+                <meta name='twitter:card' content='summary_large_image'></meta>
+                <meta property='twitter:domain' content='sm64romhacks.com'></meta>
+                <meta property='twitter:url' content={"https://sm64romhacks.com/hacks/" + patches[0].hack_url}></meta>
+                <meta name='twitter:title' content={'sm64romhacks - ' + patches[0].hack_name}></meta>
+                <meta name='twitter:description' content={patches[0].hack_description}></meta>
+            </Helmet>
+            <h1 className='text-center text-decoration-underline'>{patches[0].hack_name}</h1>
             <PatchesList patches={patches} />
             <hr/>
             <Description hack={patches} />
@@ -65,17 +82,16 @@ export default function HackPage() {
 }
 
 function PatchesList({patches}) {
-    document.title = `sm64romhacks - ${patches[0].hack_name}`
     const patchItems = patches.map((patch, index) => (
-        <tr key={index}>
+        <tr key={index} className={patch.hack_recommend === 1 ? 'table-warning' : null} data-bs-theme={patch.hack_recommend === 1 ? 'light' : 'dark'}>
             <Patch patch={patch} />
         </tr>
     ));
 
     return (
         <>
-            <table id="patchesTable" className="table-responsive table-sm table-bordered">
-                <tbody>
+            <Table responsive bordered hover>
+                <thead>
                     <tr className="fw-bold">
                         <th>Hack Name</th>
                         <th>Hack Version</th>
@@ -84,9 +100,11 @@ function PatchesList({patches}) {
                         <th>Starcount</th>
                         <th>Date</th>
                     </tr>
+                </thead>
+                <tbody>
                     {patchItems}
                 </tbody>
-            </table>
+            </Table>
         </>
     )
 }
@@ -96,7 +114,7 @@ function Patch({patch}) {
         <>
             <td>{patch.hack_name}</td>
             <td>{patch.hack_version}</td>
-            <td><a href={`/patch/${patch.hack_url}`}>Download</a><br/><span className="text-muted">Downloads: {patch.hack_downloads}</span></td>
+            <td><a href={`/patch/${patch.hack_patchname}.zip`}>Download</a><br/><span className="text-muted">Downloads: {patch.hack_downloads}</span></td>
             <td>{patch.authors}</td>
             <td>{patch.hack_starcount}</td>
             <td>{patch.hack_release_date}</td>
@@ -142,16 +160,15 @@ function Image({image}) {
 
 function EditHack({hack}) {
 
-    const is_megapack = hack[0].hack_megapack === 1;
-
     return (
         <>
-            <form onSubmit={displayData} encType='multipart/form-data' >
+            <form action='http://localhost/api/hacks/index.php' method='post' enctype='multipart/form-data' >
+                <input className='form-control' type='hidden' name='type' value={"editHack"}></input>
                 <div className='row mb-3'>
                     <label className='col-sm-2 col-form-label' htmlFor="hack_name">Hack Name:</label>
                     <div className='col-sm-10'>
                         <input id='old_hack_name' className='form-control' type='hidden' name='hack_old_name' value={hack[0].hack_name}></input>
-                        <input className='form-control' type='text' name='hack_new_name' value={hack[0].hack_name}></input>
+                        <input className='form-control' type='text' name='hack_new_name' value={hack[0].hack_name} required></input>
                     </div>
                 </div>
                 <fieldset className='row mb-3'>
@@ -162,7 +179,7 @@ function EditHack({hack}) {
                         {hack.map((patch) => (
                             <>
                                 <div className='form-check'>
-                                    <input id='flexCheckDefault' className='form-check-input' type='checkbox' name={patch.hack_id}></input>
+                                    <input id='flexCheckDefault' className='form-check-input' type='checkbox' name='recommend_version' value={patch.hack_version} defaultChecked={hack[0].hack_recommend === 1}></input>
                                     <label className='form-check-label' htmlFor='flexCheckDefault'>{patch.hack_version}</label>
                                 </div>
                             </>
@@ -174,10 +191,8 @@ function EditHack({hack}) {
                         Megapack:
                     </label>
                     <div className='col-auto'>
-                        <div className='form-check'>
-                            {
-                                is_megapack ? (<input id='flexCheckDefault' className='form-check-input' type='checkbox' name="hack_megapack" checked></input>) : <input id='flexCheckDefault' className='form-check-input' type='checkbox' name="hack_megapack"></input>
-                            }
+                        <div className='form-check'>   
+                            <input id='flexCheckDefault' className='form-check-input' type='checkbox' name="hack_megapack" defaultChecked={hack[0].hack_megapack === 1}></input>         
                         </div>
                     </div>
                 </div>
@@ -213,13 +228,6 @@ function EditHack({hack}) {
             </form>
         </>
     )
-}
-
-function displayData(e) {
-    e.preventDefault();
-    Array.from(e.target).forEach(element => {
-        console.log(element, element.value)
-    });
 }
 
 function DeleteHack() {
