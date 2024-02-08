@@ -1,5 +1,6 @@
 import {useParams} from 'react-router-dom';
 import { SRMPage } from './SRMPage';
+import League2023  from './League2023';
 import Error from './Error';
 
 const WSRM2024_EVENT_ID = "5c504w1ah0f2kpb494"
@@ -52,6 +53,11 @@ export default function Event() {
         }
     }
     else {
-        return "Other Event";
+        switch(params.event_name) {
+            case "league2023":
+                return <League2023 />
+            default:
+                return <></>
+        }
     }
 }
