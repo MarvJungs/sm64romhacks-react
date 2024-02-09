@@ -160,6 +160,7 @@ function Footer() {
               <FontAwesomeIcon icon={faPaypal} />
             </a>
           </section>
+          <hr/>
           <section>
             <div className="row">
               <div className="col">
@@ -208,7 +209,7 @@ function Footer() {
         <hr/>
         <div className="text-center p-3">
           &copy;<a href="https://sm64romhacks.com/">sm64romhacks.com</a>&nbsp;&#8226;&nbsp;<a href="/tos">Terms Of Service</a>&nbsp;&#8226;&nbsp;<a href="/privacy-policy">Privacy Policy</a><br/>
-          {date.getFullYear().toString()}
+          2019 - {date.getFullYear().toString()}
         </div>
       </footer>
     );
