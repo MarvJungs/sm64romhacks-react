@@ -4,6 +4,13 @@ import reactStringReplace from 'react-string-replace';
 import { Helmet } from 'react-helmet';
 import Error from './Error';
 import Table from 'react-bootstrap/Table';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Accordion from 'react-bootstrap/Accordion';
+import Carousel from 'react-bootstrap/Carousel';
+import Image from 'react-bootstrap/Image';
 
 export default function HackPage() {
     const params = useParams();
@@ -43,7 +50,7 @@ export default function HackPage() {
             case "editHack":
                 return (
                 <>  
-                    <EditHack hack={patches} />
+                    <EditHack hack={patches} images={images} />
                 </>
                 )
             case "deleteHack":
@@ -76,6 +83,7 @@ export default function HackPage() {
             <PatchesList patches={patches} />
             <hr/>
             <Description hack={patches} />
+            <hr/>
             <ImageList images={images} />
         </>
     )
@@ -123,109 +131,101 @@ function Patch({patch}) {
 }
 
 function Description({hack}) {
-    const description = hack[hack.length-1].hack_description;
-
+    const hack_description = reactStringReplace(hack[hack.length-1].hack_description, "\r\n", (match) => (<br/>));
     return (
-        <div className='bg-dark'>
-            {
-                reactStringReplace(description, '<br/>', (match, i) => (
-                    <br/>
-                ))
-            }
-        </div>
+        <Accordion defaultActiveKey='0'>
+            <Accordion.Item eventKey='0'>
+                <Accordion.Header>Hack Description</Accordion.Header>
+                <Accordion.Body>
+                    {hack_description}
+                </Accordion.Body>
+            </Accordion.Item>
+        </Accordion>
     )
 }
 
 function ImageList({images}) {
-    if(images.length !== 0) {
+    if(images.lenght !== 0) {
         return (
-            <div className='container'>
-                <div className='row'>
-                    {images.map((image) => (
-                        <Image image={image} />
-                    ))}
-                </div>
-            </div>
+            <Carousel>
+                {images.map((image) => (
+                <Carousel.Item interval={1000}>
+                    <Image src={'/api/images/' + image}></Image>
+                </Carousel.Item>
+                ))}
+            </Carousel>
         )
     }
 }
 
-function Image({image}) {
-    return (
-        <div className='col'>
-            <img className='p-3' width={320} height={240} src={'/api/images/' + image} alt={image}></img>
-        </div>
-    )
-}
-
-function EditHack({hack}) {
+function EditHack({hack, images}) {
+    const hack_name = hack[0].hack_name;
+    const hack_megapack = hack[0].hack_megapack;
+    const hack_tags = hack[0].hack_tags;
+    const hack_description = hack[0].hack_description;
 
     return (
         <>
-            <form action='http://localhost/api/hacks/index.php' method='post' enctype='multipart/form-data' >
-                <input className='form-control' type='hidden' name='type' value={"editHack"}></input>
-                <div className='row mb-3'>
-                    <label className='col-sm-2 col-form-label' htmlFor="hack_name">Hack Name:</label>
-                    <div className='col-sm-10'>
-                        <input id='old_hack_name' className='form-control' type='hidden' name='hack_old_name' value={hack[0].hack_name}></input>
-                        <input className='form-control' type='text' name='hack_new_name' value={hack[0].hack_name} required></input>
-                    </div>
-                </div>
-                <fieldset className='row mb-3'>
-                    <label className='col-sm-2 col-form-label pt-0'>
-                        Recommend Versions:
-                    </label>
-                    <div className='col-auto'>
+            <Form action='http://localhost/api/hacks/index.php' method='post' enctype='multipart/form-data' >
+                <Form.Control type='hidden' name='type' value={"editHack"}></Form.Control>
+                <Form.Group as={Row} className='mb-3'>
+                    <Form.Label column sm={2} htmlFor='hack_name'>Hack Name:</Form.Label>
+                    <Col sm={10}>
+                        <Form.Control type='hidden' name='hack_old_name' value={hack_name}></Form.Control>
+                        <Form.Control type='text' name='hack_new_name' value={hack_name} required></Form.Control>
+                    </Col>
+                </Form.Group>
+                <Form.Group as={Row} className='mb-3'>
+                    <Form.Label as="legend" column sm={2}>Recommend Versions:</Form.Label>
+                    <Col sm={10}>
                         {hack.map((patch) => (
                             <>
-                                <div className='form-check'>
-                                    <input id='flexCheckDefault' className='form-check-input' type='checkbox' name='recommend_version' value={patch.hack_version} defaultChecked={hack[0].hack_recommend === 1}></input>
-                                    <label className='form-check-label' htmlFor='flexCheckDefault'>{patch.hack_version}</label>
-                                </div>
+                                <Form.Check type='checkbox' label={patch.hack_version} name={patch.hack_id} defaultChecked={patch.hack_recommend === 1}></Form.Check>
                             </>
-                         ))}
-                    </div>
-                </fieldset>
-                <div className='row mb-3'>
-                    <label className='col-sm-2 col-form-label pt-0'>
-                        Megapack:
-                    </label>
-                    <div className='col-auto'>
-                        <div className='form-check'>   
-                            <input id='flexCheckDefault' className='form-check-input' type='checkbox' name="hack_megapack" defaultChecked={hack[0].hack_megapack === 1}></input>         
-                        </div>
-                    </div>
-                </div>
-                <div className='row mb-3'>
-                    <label className='col-sm-2 col-form-label pt-0'>
-                        Hack Tags:
-                    </label>
-                    <div className='col-sm-5'>
-                        <input id='flexCheckDefault' className='form-control' type='text' name="hack_tags" value={hack[0].hack_tags}></input>
-                    </div>
-                </div>  
-                <div className='row mb-3'>
-                    <label className='col-sm-2 col-form-label pt-0'>
-                            Images
-                    </label>
-                    <div className='col-sm-5'>
-                        <input className='form-control' type='file' name='hack_images[]' multiple></input>
-                    </div> 
-                </div>
-                <div className='row mb-3'>
-                    <label className='col-form-label col-sm-2 pt-0'>
-                        Description:
-                    </label>
-                    <div className='col-sm-10'>
-                        <textarea className='form-control' name='hack_description' rows={10}></textarea>
-                    </div>
-                </div>
-                <div className='row mb-3'>
-                    <div className='col-sm-10'>
-                        <button className='btn btn-secondary align-middle' type='submit'>Save Changes</button>
-                    </div>
-                </div>                         
-            </form>
+                        ))}
+                    </Col>
+                </Form.Group>
+                <Form.Group as={Row} className='mb-3'>
+                    <Form.Label as="legend" column sm={2}>Megapack:</Form.Label>
+                    <Col sm={10}>
+                        <Form.Check type='checkbox' name='hack_megapack' defaultChecked={hack_megapack === 1}></Form.Check>
+                    </Col>
+                </Form.Group>
+                <Form.Group as={Row} className='mb-3'>
+                    <Form.Label column sm={2}>Hack Tags:</Form.Label>
+                    <Col sm={10}>
+                        <Form.Control type='text' name='hack_tags' value={hack_tags}></Form.Control>
+                        <Form.Text className='text-muted'>Seperate multiple tags with a Komma and a Whitespace. Example: Easy, Traditional</Form.Text>
+                    </Col>
+                </Form.Group>
+                <Form.Group as={Row} className='mb-3'>
+                    <Form.Label column sm={2}>Images:</Form.Label>
+                    <Col sm={10}>
+                        <Form.Control type='file' name='hack_images[]' multiple></Form.Control>
+                        <Row className='text-center'>
+                        {images.map((image) => (
+                            <Col>
+                                    <Image src={'/api/images/' + image} width={160} height={120}></Image>
+                                
+                                    <Form.Check type='checkbox' name='hack_images_checked[]' value={image.substring(0, image.lenght - 4)} defaultChecked={true}></Form.Check>
+                            </Col>
+                        ))}
+                        </Row>
+                    </Col>
+                </Form.Group>
+                <Form.Group as={Row} className='mb-3'>
+                    <Form.Label column sm={2}>Description</Form.Label>
+
+                    <Col sm={10}>
+                        <Form.Control as='textarea' name='hack_description' defaultValue={hack_description} rows={10}></Form.Control>
+                    </Col>
+                </Form.Group>
+                <Form.Group as={Row} className='mb-3'>
+                    <Col sm={{span: 10, offset: 2}}>
+                        <Button variant='primary' type='submit'>Save Changes</Button>
+                    </Col>
+                </Form.Group>
+            </Form>
         </>
     )
 }
